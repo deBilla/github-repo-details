@@ -24,3 +24,9 @@ Then run the following commands.
 Deployment could be done using `docker-compose`. For this your environment need to have `Docker` installed.
 
 `docker-compose up`
+
+## Testing
+
+You can use the swagger docs to trigger the API
+
+http://localhost:8080/swagger-ui/index.html#/github-repo-details-controller/getRepositoryDetails
