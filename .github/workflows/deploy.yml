@@ -12,6 +12,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      SPRING_REDIS_HOST: localhost
+      SPRING_REDIS_PORT: 6379
+
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
