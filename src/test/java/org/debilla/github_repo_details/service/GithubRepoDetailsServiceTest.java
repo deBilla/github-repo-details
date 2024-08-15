@@ -1,5 +1,6 @@
 package org.debilla.github_repo_details.service;
 
+import org.debilla.github_repo_details.dto.GithubRepoDTO;
 import org.debilla.github_repo_details.exceptions.RepositoryNotFoundException;
 import org.debilla.github_repo_details.model.GithubRepoDetailsResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -42,16 +45,26 @@ class GithubRepoDetailsServiceTest {
         String owner = "owner";
         String repositoryName = "repo";
         GithubRepoDetailsResponse mockResponse = new GithubRepoDetailsResponse();
+        mockResponse.setFullName("Sample Repo");
+        mockResponse.setDescription("A sample repo");
+        mockResponse.setStars(100);
+        mockResponse.setCloneUrl("https://github.com/owner/repo.git");
+        mockResponse.setCreatedAt(LocalDateTime.now().toString());
         ResponseEntity<GithubRepoDetailsResponse> responseEntity = new ResponseEntity<>(mockResponse, HttpStatus.OK);
         when(restTemplate.getForEntity(anyString(), eq(GithubRepoDetailsResponse.class)))
                 .thenReturn(responseEntity);
 
         // When
-        GithubRepoDetailsResponse result = githubRepoDetailsService.getRepositoryDetails(owner, repositoryName);
+        GithubRepoDTO result = githubRepoDetailsService.getRepositoryDetails(owner, repositoryName);
 
         // Then
         assertNotNull(result);
-        assertEquals(mockResponse, result);
+        assertEquals(mockResponse.getFullName(), result.getFullName());
+        assertEquals(mockResponse.getDescription(), result.getDescription());
+        assertEquals(mockResponse.getStars(), result.getStars());
+        assertEquals(mockResponse.getCloneUrl(), result.getCloneUrl());
+        assertEquals(mockResponse.getCreatedAt(), result.getCreatedAt());
+
         verify(restTemplate, times(1)).getForEntity(anyString(), eq(GithubRepoDetailsResponse.class));
     }
 

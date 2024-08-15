@@ -1,5 +1,6 @@
 package org.debilla.github_repo_details.service;
 
+import org.debilla.github_repo_details.dto.GithubRepoDTO;
 import org.debilla.github_repo_details.exceptions.RepositoryNotFoundException;
 import org.debilla.github_repo_details.model.GithubRepoDetailsResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,12 +25,18 @@ public class GithubRepoDetailsService {
     }
 
     @Cacheable(value = "repoDetailsCache", key = "#owner + '/' + #repositoryName")
-    public GithubRepoDetailsResponse getRepositoryDetails(String owner, String repositoryName) {
+    public GithubRepoDTO getRepositoryDetails(String owner, String repositoryName) {
         String url = String.format("%s/repos/%s/%s", this.githubApiUrl, owner, repositoryName);
         try {
             ResponseEntity<GithubRepoDetailsResponse> response = this.restTemplate.getForEntity(url, GithubRepoDetailsResponse.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return response.getBody();
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                GithubRepoDTO githubRepoDTO = new GithubRepoDTO();
+                githubRepoDTO.setFullName(response.getBody().getFullName());
+                githubRepoDTO.setDescription(response.getBody().getDescription());
+                githubRepoDTO.setStars(response.getBody().getStars());
+                githubRepoDTO.setCloneUrl(response.getBody().getCloneUrl());
+                githubRepoDTO.setCreatedAt(response.getBody().getCreatedAt());
+                return githubRepoDTO;
             } else {
                 throw new RepositoryNotFoundException("Failed to fetch repository details: " + response.getStatusCode());
             }

@@ -1,8 +1,8 @@
 package org.debilla.github_repo_details.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.debilla.github_repo_details.dto.GithubRepoDTO;
 import org.debilla.github_repo_details.exceptions.RepositoryNotFoundException;
-import org.debilla.github_repo_details.model.GithubRepoDetailsResponse;
 import org.debilla.github_repo_details.service.GithubRepoDetailsService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +30,15 @@ public class GithubRepoDetailsControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    public GithubRepoDetailsControllerTest() {
+    }
+
     @Test
     void testGetRepositoryDetails_Success() throws Exception {
         // Given
         String owner = "owner";
         String repositoryName = "repo";
-        GithubRepoDetailsResponse mockResponse = new GithubRepoDetailsResponse();
+        GithubRepoDTO mockResponse = new GithubRepoDTO();
         mockResponse.setFullName("Test Repo");
         mockResponse.setDescription("A test repository");
         when(githubRepoDetailsService.getRepositoryDetails(owner, repositoryName))
@@ -46,7 +49,7 @@ public class GithubRepoDetailsControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.full_name").value(mockResponse.getFullName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fullName").value(mockResponse.getFullName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(mockResponse.getDescription()))
                 .andDo(print());
     }
